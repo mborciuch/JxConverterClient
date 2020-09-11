@@ -3,7 +3,7 @@ import './App.css';
 import './ConverterComponent';
 import ConverterComponent from "./ConverterComponent";
 
-const url = "/converters";
+const path = "api/converters";
 const xmlConverter = {
     id: "xml-to-json-converter",
     title: "xml",
@@ -53,7 +53,8 @@ class App extends Component {
 
     handleConvertToJson() {
         document.getElementById(jsonConverter.textareaId).value = "";
-        fetch(`${url}?conversionType=toJson`, {
+        console.log(`${path}?conversionType=toJson`)
+        fetch(`${path}?conversionType=toJson`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -75,7 +76,7 @@ class App extends Component {
     }
     handleConvertToXml() {
         document.getElementById(xmlConverter.textareaId).value = "";
-        fetch(`${url}?conversionType=toXml`, {
+        fetch(`${path}?conversionType=toXml`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -95,8 +96,6 @@ class App extends Component {
                 }
             )
     }
-
-
 
     render() {
         return (
