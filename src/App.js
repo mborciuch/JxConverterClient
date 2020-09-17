@@ -53,7 +53,6 @@ class App extends Component {
 
     handleConvertToJson() {
         document.getElementById(jsonConverter.textareaId).value = "";
-        console.log(`${path}?conversionType=toJson`)
         fetch(`${path}?conversionType=toJson`, {
             method: "POST",
             headers: {
@@ -63,17 +62,24 @@ class App extends Component {
         })
             .then(response => {
                 return response.json()
+                    .then(json => {
+                        if (!response.ok) {
+                            return Promise.reject({message: json.message});
+                        }
+                        return json;
+                    })
             })
             .then(jsonValue => {
-                    if (jsonValue.value !== undefined) {
-                        this.setState({jsonValue: JSON.stringify(jsonValue.value)});
-                    } else {
-                        this.setState({jsonValue: JSON.stringify(jsonValue.message)});
-                    }
+                    this.setState({jsonValue: JSON.stringify(jsonValue.value)});
                     this.updateJsonTextArea(this.state.jsonValue);
                 }
-            );
+            )
+            .catch(error => {
+                this.setState({jsonValue: error.message});
+                this.updateJsonTextArea(this.state.jsonValue);
+            });
     }
+
     handleConvertToXml() {
         document.getElementById(xmlConverter.textareaId).value = "";
         fetch(`${path}?conversionType=toXml`, {
