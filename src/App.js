@@ -87,20 +87,26 @@ class App extends Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({value: this.state.jsonValue})
+            body: JSON.stringify({value: this.state.xmlValue})
         })
-            .then(response => response.json())
-            .then(xmlValue => {
-                    if (xmlValue.value !== undefined) {
-                        let value = JSON.stringify(xmlValue.value);
-                        value = value.substring(1, value.length - 1);
-                        this.setState({xmlValue: value});
-                    } else {
-                        this.setState({xmlValue: JSON.stringify(xmlValue.message)});
-                    }
+            .then(response => {
+                return response.json()
+                    .then(json => {
+                        if (!response.ok) {
+                            return Promise.reject({message: json.message});
+                        }
+                        return json;
+                    })
+            })
+            .then(jsonValue => {
+                    this.setState({xmlValue: JSON.stringify(jsonValue.value)});
                     this.updateXmlTextArea(this.state.xmlValue);
                 }
             )
+            .catch(error => {
+                this.setState({xmlValue: error.message});
+                this.updateXmlTextArea(this.state.xmlValue);
+            });
     }
 
     render() {
